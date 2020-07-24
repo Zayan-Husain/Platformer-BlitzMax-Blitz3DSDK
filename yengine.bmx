@@ -417,3 +417,25 @@ Function ycount_filis_in_dir:Int(dirn$)
 
 	Return c
 EndFunction
+
+
+Function ysign(n)
+
+	If n >0 Then Return 1
+	If n <0 Then Return -1
+	If n =0 Then Return 0
+	
+
+EndFunction
+
+Function ylabs(n)
+
+	If n >0 Then Return n
+	If n <0 Then Return n*-1
+	If n =0 Then Return 0
+	
+
+EndFunction
+
+
+

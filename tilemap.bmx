@@ -23,6 +23,40 @@ Type ytilemap Extends yentity
 			o.tile_type = id
 			world.add( o )
 		EndIf
+		
+		If id = 2 Then
+			s = bbCreateCone()
+			bbEntityColor s, 25, 25, 25
+			o:obstacle = obstacle.Create( x, y, z, s, 0 )
+			o.tile_type = id
+			o.ytype = "spikes"
+			world.add( o )
+			o.collide_c = 0.1
+		EndIf
+		
+		If id = 3 Then
+			
+			c =  bbCreateCube()
+			bbEntityColor c, 0, 255, 0
+			o:obstacle =  obstacle.Create( x, y, z, c, 0 )
+			o.tile_type = id
+			o.yaction = "win"
+			world.add( o )
+		EndIf
+		
+		If id = 4 Then
+			c = bbCreateSphere()
+			bbEntityColor c, 255, 255, 0
+			o:obstacle = obstacle.Create( x, y, z, c, 0 )
+			o.yaction = "coin"
+			world.add( o )
+		EndIf
+		If id = 5 Then
+			c = bbCreateCube()
+			o:obstacle = obstacle.Create( x, y, z, c, 0 )
+			o.alpha( 0 )
+			world.add( o )
+		EndIf
 
 	
 	End Method'end make_tile
@@ -94,14 +128,35 @@ Type ytilemap Extends yentity
 		
 	Method saveMap()
 		
+						
+		'write file
+		file = WriteFile( "new_map.txt" )
+		
+		If Not file RuntimeError "failed to open test.txt file"
+	
+		
 		maptxt:String = ""
 		os:TList = get_by_type( "obstacle" )
 		For e:yentity = EachIn os
 			o:obstacle = obstacle( e )
-			l:String = String( o.x ) + "," + String( o.y ) + "," + String( o.z ) + "," + o.tile_type + "\n"
+			l:String = String( o.x ) + "," + String( o.y ) + "," + String( o.z ) + "," + o.tile_type' + "\n"
+			WriteLine file, l
 			maptxt = maptxt + l
 		Next
-		Print maptxt
+		spk:TList = get_by_type( "spikes" )
+		For e:yentity = EachIn spk
+			o:obstacle = obstacle( e )
+			l:String = String( o.x ) + "," + String( o.y ) + "," + String( o.z ) + "," + o.tile_type' + "\n"
+			WriteLine file, l
+			maptxt = maptxt + l
+		Next
+		'Print maptxt
+		
+	
+		
+		
+		CloseStream file
+		
 	EndMethod
 	
 	Function Create:ytilemap( x:Float = 0, y:Float = 0, z:Float = 0, grafic:Int = 0, speed:Float = 0 )

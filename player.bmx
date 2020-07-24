@@ -7,6 +7,7 @@ Type player Extends yentity
 	Field jumping = False, cams:Float = 0.08, grav:Float = 0, ograv:Float = 0, jump_power:Float = 20
 	Field canJump = True, powerupTimer:ytimer, effect:String = "none", make_map, tmap:ytilemap, currt = 1
 
+	Field speedx, speedy, speedz
 
 	Method init()
 	
@@ -76,8 +77,28 @@ Type player Extends yentity
 		If kd( 57 ) And make_map And  Not o Then
 
 				tmap.make_tile( x, y, z, currt )
-				tmap.saveMap()
 		 EndIf
+		
+		If kd( 2 ) And make_map Then
+			currt = 1
+	 	EndIf
+		If kd( 3 ) And make_map Then
+			currt = 2
+		EndIf
+		If kd( 4 ) And make_map Then
+			currt = 3
+		EndIf
+		If kd( 5 ) And make_map Then
+			currt = 4
+		EndIf
+		If kd( 6 ) And make_map Then
+			currt = 5
+		EndIf
+		 
+		If kd( 29 ) Or kd( 157 ) And kd( 31 ) Then
+				 tmap.saveMap()
+				 Print "YOU JUST SAVED THE MAP!!!!!!!!"
+		EndIf
 
 		If make_map Then Return
 		
@@ -110,16 +131,23 @@ Type player Extends yentity
 	
 	Method adjustPosX()
 		
-		' xs = Math.sign(t.speedx);
-    ' for (let i = 0; i < Math.abs(t.speedx); i++) {
-    '   if (!t.hit_test("tile", xs, 0) && !t.hit_test("door", xs, 0) && !t.hit_test("trigger", xs, 0)) {
-    '     t.move_by(xs, 0);
-    '   } else {
-    '     t.speedx = 0;
-    '     break;
-    '   }
-    ' }
-	EndMethod
+
+		xs = ysign( speedx )
+		i = 0
+		While i <= ylabs( speedx )
+			
+			If Not collide( "obstacle", xs ) Then
+					move_by( xs );
+				Else
+					speedx = 0
+					Exit 'break
+						
+			EndIf
+			
+			i = i+1
+		Wend
+		
+	EndMethod 'adjustPosX
 	
 	Method hit()
 	
