@@ -4,10 +4,10 @@
 Type player Extends yentity
 
 	'cams = cam speed, grav = gravity
-	Field jumping = False, cams:Float = 0.08, grav:Float = 0, ograv:Float = 0, jump_power:Float = 20
+	Field jumping = False, cams:Float = 0.08, grav:Float = -0.5, ograv:Float = -0.5, jump_power:Float = 20
 	Field canJump = True, powerupTimer:ytimer, effect:String = "none", make_map, tmap:ytilemap, currt = 1
 
-	Field speedx, speedy, speedz
+	Field speedx, speedy, speedz, hspeed = 0.5
 
 	Method init()
 	
@@ -31,14 +31,76 @@ Type player Extends yentity
 	
 		Super.update()
 		
+		editMove()
 		move()
 		hit()
 		update_effects()
+		If Not make_map Then
+			adjustPosX()
+			adjustPosY()
+			adjustPosZ()
+		EndIf
 
 	End Method'end update
 	
 	Method move()
+		
+		If make_map Then return
+		cam = ye.camera
+		'z axis
+		If kd( 200 ) Then 
+	    	bbMoveEntity cam, 0, 0, cams
+				speedz = speedz + hspeed
+		EndIf
+		
+		If kd( 208 ) Then 
+	    	bbMoveEntity cam, 0, 0, -cams
+				speedz = speedz - hspeed
+		EndIf
+
+		'left right
+		If kd( 203 ) Then 
+			bbMoveEntity cam, -cams, 0, 0
+			speedx = speedx - hspeed
+		EndIf
+		If kd( 205 ) Then
+			 bbMoveEntity cam, cams, 0, 0
+			 speedx = speedx + hspeed
+		EndIf
+
+		'if debug mod
+		If make_map Then Return
+		
+		'jump
+		If kd( 57 ) And Not jumping And canJump Then
+			
+
+			 speedy = speedy + jump_power
+			 jumping = True
+		 	 grav = ograv
+		EndIf
+
+		'gravity
+		If y < -15  Then
+			jumping = False
+			 bbPositionEntity cam, 0, 0, -4
+			 gw:game_world = game_world( world )
+			 gw.restartLevel()
+			
+		Else
+
+
+		EndIf
+		
+		move_by( 0, grav )
 	
+			
+	
+	End Method'end move
+	
+	Method editMove()
+		
+		If Not make_map Then return
 		cam = ye.camera
 
 		If kd( 200 ) Then 
@@ -72,6 +134,8 @@ Type player Extends yentity
 			 move_by( 0, -speed, 0 )
 		EndIf
 		
+		
+		
 		o:obstacle = obstacle( collide( "obstacle" ) )
 		'place tile
 		If kd( 57 ) And make_map And  Not o Then
@@ -100,46 +164,32 @@ Type player Extends yentity
 				 Print "YOU JUST SAVED THE MAP!!!!!!!!"
 		EndIf
 
-		If make_map Then Return
-		
-		'jump
-		If kd( 57 ) And Not jumping And canJump Then
-			
-
-			 move_by( 0, jump_power )	
-			 jumping = True
-		 	 grav = ograv
+		'click . to exit edit mode
+		If kd( 52 ) Then
+		 	make_map = False
+			tmap.saveMap()
+		    Print "YOU JUST SAVED THE MAP!!!!!!!!"
 		EndIf
-
-		'gravity
-		If y < -15  Then
-			jumping = False
-			 bbPositionEntity cam, 0, 0, -4
-			 gw:game_world = game_world( world )
-			 gw.restartLevel()
-			
-		Else
-
-
+		'click , to exit edit mod
+		If kd( 51 ) Then
+			 make_map = True
 		EndIf
-		
-		move_by( 0, grav )
-	
-			
-	
-	End Method'end move
+	EndMethod
 	
 	Method adjustPosX()
 		
 
 		xs = ysign( speedx )
 		i = 0
+		Print xs
 		While i <= ylabs( speedx )
 			
 			If Not collide( "obstacle", xs ) Then
 					move_by( xs );
+					Print "move x " + xs * speedx
 				Else
 					speedx = 0
+					Print "break" 
 					Exit 'break
 						
 			EndIf
@@ -148,6 +198,47 @@ Type player Extends yentity
 		Wend
 		
 	EndMethod 'adjustPosX
+		
+	Method adjustPosY()
+		
+
+		ys = ysign( speedy )
+		i = 0
+		While i <= ylabs( speedy )
+			
+			If Not collide( "obstacle", ys ) Then
+					move_by( 0, ys );
+					Print "move y " + ys * speedy
+				Else
+					speedy = 0
+					Exit 'break
+						
+			EndIf
+			
+			i = i+1
+		Wend
+		
+	EndMethod 'adjustPosY
+		
+	Method adjustPosZ()
+		
+
+		zs = ysign( speedz )
+		i = 0
+		While i <= ylabs( speedy )
+			
+			If Not collide( "obstacle", zs ) Then
+					move_by( 0, 0, zs );
+				Else
+					speedz = 0
+					Exit 'break
+						
+			EndIf
+			
+			i = i+1
+		Wend
+		
+	EndMethod 'adjustPosZ
 	
 	Method hit()
 	

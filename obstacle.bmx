@@ -15,7 +15,25 @@ Type obstacle Extends yentity
 	
 	End Method'end init
 	
+	
+	Method update()
+	
+		Super.update()
+		
+		ydelete()
 
+	End Method'end update	
+	
+	Method ydelete()
+
+		If click() And kd(56) Then
+		    ps:TList  = get_by_type( "player" )
+			p:player = player(ps.FirstLink().Value())
+			If p.make_map Then world.remove(Self)
+			
+		EndIf
+
+	End Method'end ydelete
 	
 	Function Create:obstacle( x:Float, y:Float, z:Float, grafic:Int, speed:Float )
 		

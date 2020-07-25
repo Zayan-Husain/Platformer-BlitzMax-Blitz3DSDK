@@ -48,12 +48,14 @@ Type ytilemap Extends yentity
 			c = bbCreateSphere()
 			bbEntityColor c, 255, 255, 0
 			o:obstacle = obstacle.Create( x, y, z, c, 0 )
+			o.tile_type = id
 			o.yaction = "coin"
 			world.add( o )
 		EndIf
 		If id = 5 Then
 			c = bbCreateCube()
 			o:obstacle = obstacle.Create( x, y, z, c, 0 )
+			o.tile_type = id
 			o.alpha( 0 )
 			world.add( o )
 		EndIf
