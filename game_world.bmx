@@ -6,7 +6,7 @@
 
 Type game_world Extends yworld
 	
-Field cl = 1, tm:ytilemap, score = 0, lives = 3, maxLevels = 3
+Field cl = 1, tm:ytilemap, score = 0, lives = 3, maxLevels
 		
 	Method update()
 		
@@ -50,7 +50,7 @@ Field cl = 1, tm:ytilemap, score = 0, lives = 3, maxLevels = 3
 		c =  bbCreateCube()
 		p:player = player.Create( -3, 0, 7, c, 0.2 )
 		add( p )
-		p.make_map=True
+		p.make_map = True
 		
 		Rem c2 =  bbCreateCube()
 		add( obstacle.Create( 0, -5, 18, c2, 0 ) )
@@ -65,7 +65,10 @@ Field cl = 1, tm:ytilemap, score = 0, lives = 3, maxLevels = 3
 	Method nextLevel()
 		
 		cl = cl + 1
+		Print cl
+		Print maxLevels
 		If cl > maxLevels Then
+			Print "max level reached"
 			cl = 1
 		EndIf
 		init()

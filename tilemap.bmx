@@ -40,6 +40,7 @@ Type ytilemap Extends yentity
 			bbEntityColor c, 0, 255, 0
 			o:obstacle =  obstacle.Create( x, y, z, c, 0 )
 			o.tile_type = id
+			o.ytype = "win"
 			o.yaction = "win"
 			world.add( o )
 		EndIf
@@ -49,6 +50,7 @@ Type ytilemap Extends yentity
 			bbEntityColor c, 255, 255, 0
 			o:obstacle = obstacle.Create( x, y, z, c, 0 )
 			o.tile_type = id
+			o.ytype = "coin"
 			o.yaction = "coin"
 			world.add( o )
 		EndIf

@@ -41,7 +41,7 @@ Type start_screen Extends yworld
 	
 	Method start_click()
 		
-		If start_btn.click() Then
+		If start_btn.click() Or kd( 57 )  Then
 			ye.change_world( "game_world",1 )
 		EndIf 
 	EndMethod

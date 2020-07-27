@@ -4,10 +4,10 @@
 Type player Extends yentity
 
 	'cams = cam speed, grav = gravity
-	Field jumping = False, cams:Float = 0.08, grav:Float = -0.5, ograv:Float = -0.5, jump_power:Float = 20
+	Field jumping = False, cams:Float = 0.08, grav:Float = 0.5, ograv:Float = 0.5, jump_power:Float = 6
 	Field canJump = True, powerupTimer:ytimer, effect:String = "none", make_map, tmap:ytilemap, currt = 1
 
-	Field speedx, speedy, speedz, hspeed = 0.5
+	Field speedx:Float, speedy:Float, speedz:Float, hspeed:Float = 0.01, dspeed:Float = 0.01, vspeed:Float = 0.05
 
 	Method init()
 	
@@ -33,6 +33,7 @@ Type player Extends yentity
 		
 		editMove()
 		move()
+		cam_pos()
 		hit()
 		update_effects()
 		If Not make_map Then
@@ -42,34 +43,57 @@ Type player Extends yentity
 		EndIf
 
 	End Method'end update
-	
+	'/////////////// cam_po/////////
+		
+	Method cam_pos()
+		
+		cam = ye.camera
+		bbPositionEntity cam, x, y+3, z-10
+		
+	EndMethod
+	'///////////////move/////////
+		
 	Method move()
 		
-		If make_map Then return
+	    'if debug mod exit
+		If make_map Then Return
+		
+		
 		cam = ye.camera
 		'z axis
 		If kd( 200 ) Then 
-	    	bbMoveEntity cam, 0, 0, cams
-				speedz = speedz + hspeed
+	    '	bbMoveEntity cam, 0, 0, cams
+			speedz = speedz + 1
 		EndIf
 		
 		If kd( 208 ) Then 
-	    	bbMoveEntity cam, 0, 0, -cams
-				speedz = speedz - hspeed
+	    '	bbMoveEntity cam, 0, 0, -cams
+			speedz = speedz - 1
+			
 		EndIf
+		
+		
+		If Not kd( 200 ) And Not kd( 208 ) Then speedz = 0
+		
+		
 
 		'left right
 		If kd( 203 ) Then 
-			bbMoveEntity cam, -cams, 0, 0
-			speedx = speedx - hspeed
+		'	bbMoveEntity cam, -cams, 0, 0
+			speedx = speedx - 1
 		EndIf
+		
 		If kd( 205 ) Then
-			 bbMoveEntity cam, cams, 0, 0
-			 speedx = speedx + hspeed
+			' bbMoveEntity cam, cams, 0, 0
+			 speedx = speedx + 1
+			
 		EndIf
+		
+		If Not kd( 203 ) And Not kd( 205 ) Then speedx = 0
+		
 
-		'if debug mod
-		If make_map Then Return
+	
+
 		
 		'jump
 		If kd( 57 ) And Not jumping And canJump Then
@@ -92,30 +116,36 @@ Type player Extends yentity
 
 		EndIf
 		
-		move_by( 0, grav )
+		speedy = speedy - grav
+		
+		'click , to enter edit mod
+		If kd( 51 ) Then
+			 make_map = True
+		EndIf
 	
 			
 	
 	End Method'end move
-	
+	'/////////////edit move/////////////
+		
 	Method editMove()
 		
-		If Not make_map Then return
+		If Not make_map Then Return
 		cam = ye.camera
 
 		If kd( 200 ) Then 
-	    	bbMoveEntity cam, 0, 0, cams
+	    '	bbMoveEntity cam, 0, 0, cams
 	    	bbMoveEntity grafic, 0, 0, cams
 		EndIf
 		
 		If kd( 208 ) Then 
-	    	bbMoveEntity cam, 0, 0, -cams
+	    '	bbMoveEntity cam, 0, 0, -cams
 	    	bbMoveEntity grafic, 0, 0, -cams
 		EndIf
 
 		'left right
 		If kd( 203 ) Then 
-			bbMoveEntity cam, -speed, 0, 0
+		'	bbMoveEntity cam, -speed, 0, 0
 			move_by( -speed, 0, 0 )
 		EndIf
 		If kd( 205 ) Then
@@ -170,26 +200,26 @@ Type player Extends yentity
 			tmap.saveMap()
 		    Print "YOU JUST SAVED THE MAP!!!!!!!!"
 		EndIf
-		'click , to exit edit mod
+		'click , to enter edit mod
 		If kd( 51 ) Then
 			 make_map = True
 		EndIf
 	EndMethod
 	
+	
+	'////////adjust pos///////
+		
 	Method adjustPosX()
 		
 
 		xs = ysign( speedx )
 		i = 0
-		Print xs
 		While i <= ylabs( speedx )
 			
 			If Not collide( "obstacle", xs ) Then
-					move_by( xs );
-					Print "move x " + xs * speedx
+					move_by( xs*hspeed ); 
 				Else
 					speedx = 0
-					Print "break" 
 					Exit 'break
 						
 			EndIf
@@ -198,7 +228,9 @@ Type player Extends yentity
 		Wend
 		
 	EndMethod 'adjustPosX
-		
+	
+	
+	
 	Method adjustPosY()
 		
 
@@ -206,9 +238,9 @@ Type player Extends yentity
 		i = 0
 		While i <= ylabs( speedy )
 			
-			If Not collide( "obstacle", ys ) Then
-					move_by( 0, ys );
-					Print "move y " + ys * speedy
+			If Not collide( "obstacle", 0, ys ) Then
+					move_by( 0, ys*vspeed );
+					
 				Else
 					speedy = 0
 					Exit 'break
@@ -225,12 +257,13 @@ Type player Extends yentity
 
 		zs = ysign( speedz )
 		i = 0
-		While i <= ylabs( speedy )
+		While i <= ylabs( speedz )
 			
-			If Not collide( "obstacle", zs ) Then
-					move_by( 0, 0, zs );
+			If Not collide( "obstacle", 0, 0, zs ) Then
+					move_by( 0, 0, zs*dspeed );
 				Else
 					speedz = 0
+					
 					Exit 'break
 						
 			EndIf
@@ -240,45 +273,43 @@ Type player Extends yentity
 		
 	EndMethod 'adjustPosZ
 	
+	'////////////collision detection///////////
+	
 	Method hit()
 	
 		If make_map Then Return
-	
+
 		'collide obstacle cast yentity to obstacle
 		o:obstacle = obstacle( collide( "obstacle" ) )
 		
-		sp =  collide( "spikes", 0, 3.2 )
+		sp =  collide( "spikes" )
+		hit_win =  collide( "win" )
 		
-		top:yentity = collide( "obstacle", 0, 1 )
+		top:yentity = collide( "obstacle", 0, -1 )
 		
-		front = collide( "obstacle", 0, -1, -1 )
+
 		
 		
 		If top Then 
-			'move_by(0,2.5,0)
-			sy( top.y+1 )
+			'Print "hit top"
 			jumping = False
-			'grav = 0
 		Else
 			
 			
 		EndIf
 		
-		'If front Then Print "hit"
-
 		'/////action collide
-		If o  And o.yaction Then
-			
-			If o.yaction = "win" Then
-				Print  o.yaction
+		If hit_win Then
+			Print  o.yaction
 
-				bbPositionEntity ye.camera, 0, 0, -4
-				gw:game_world = game_world( world )
-				gw.nextLevel()
-				ye.change_world( "win_world" )		
-			EndIf'win
-	
-			
+			bbPositionEntity ye.camera, 0, 0, -4
+			gw:game_world = game_world( world )
+			Print "do next level"
+			gw.nextLevel()
+			ye.change_world( "win_world" )
+		EndIf'win
+		If o  And o.yaction Then
+		
 			If o.yaction = "nograv" Then set_effect( "nogravity" )	
 			If o.yaction = "coin" Then
 				
@@ -304,10 +335,14 @@ Type player Extends yentity
 	
 	End Method'end collide ////////////////////
 	
+	'/////////////hendale effects///////////
+		
 	Method set_effect( e:String )
 		
 		effect = e
 	EndMethod
+	
+
 	
 	Method update_effects()
 		
@@ -323,6 +358,8 @@ Type player Extends yentity
 			EndIf
 		EndIf
 	EndMethod
+	
+	'///////constructor////////
 	
 	Function Create:player( x:Float, y:Float, z:Float, grafic:Int, speed:Float )
 		

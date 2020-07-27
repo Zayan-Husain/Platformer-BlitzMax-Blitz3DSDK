@@ -330,11 +330,7 @@ Type yentity
 		
 	End Method ' click
 	
-	Method kd(key)
-	
-		If bbKeyDown (key) Then Return True
-		
-	End Method 'key down
+
 	
 	Method sxyz(mx#=0,my#=0,mz#=0)
 		bbPositionEntity grafic,mx,my,mz
@@ -436,6 +432,12 @@ Function ylabs(n)
 	
 
 EndFunction
+
+Function kd(key)
+
+	If bbKeyDown (key) Then Return True
+	
+EndFunction 'key down
 
 
 
