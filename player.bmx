@@ -4,17 +4,17 @@
 Type player Extends yentity
 
 	'cams = cam speed, grav = gravity
-	Field jumping = False, cams:Float = 0.08, grav:Float = 0.5, ograv:Float = 0.5, jump_power:Float = 6
+	Field jumping = False, cams:Float = 0.08, grav:Float = 0.5, ograv:Float = 0.5, jump_power:Float = 4
 	Field canJump = True, powerupTimer:ytimer, effect:String = "none", make_map, tmap:ytilemap, currt = 1
 
-	Field speedx:Float, speedy:Float, speedz:Float, hspeed:Float = 0.01, dspeed:Float = 0.01, vspeed:Float = 0.05
+	Field speedx:Float, speedy:Float, speedz:Float, hspeed:Float = 0.01, dspeed:Float = 0.01, vspeed:Float = 0.05, yaw:Float = 0
 
 	Method init()
 	
 		Super.init()
-		bbEntityType grafic, 2
+		'bbEntityType grafic, 2
 		'src_type,dest_type,detectionmethod,response
-		bbCollisions 2, 1, 2, 2
+		'bbCollisions 2, 1, 2, 2
 		powerupTimer = ytimer.Create( 25 )
 		
 
@@ -45,11 +45,28 @@ Type player Extends yentity
 	End Method'end update
 	'/////////////// cam_po/////////
 		
-	Method cam_pos()
-		
-		cam = ye.camera
-		bbPositionEntity cam, x, y+3, z-10
-		
+	'/////////////// cam_po/////////
+
+Method cam_pos()
+
+	cam = ye.camera
+	
+	If Not grafic Then Return
+	turn_speed:Float = 1
+	
+	If kd( 203 ) Then yaw = yaw+turn_speed
+	If kd( 205 ) Then yaw = yaw-turn_speed
+	
+	bbRotateEntity grafic, 0, yaw, 0
+	bbRotateEntity cam, 0, yaw, 0
+	bbRotateEntity ye.light, 0, yaw, 0
+	
+	cx:Float = x+Sin( -bbEntityYaw( grafic )+180 )*5.0
+	cy:Float = y+2.5
+	cz:Float = z+Cos( -bbEntityYaw( grafic )+180 )*7.0
+	
+	bbPositionEntity cam, cx, cy, cz
+	
 	EndMethod
 	'///////////////move/////////
 		
@@ -78,16 +95,16 @@ Type player Extends yentity
 		
 
 		'left right
-		If kd( 203 ) Then 
-		'	bbMoveEntity cam, -cams, 0, 0
-			speedx = speedx - 1
-		EndIf
+		' If kd( 203 ) Then 
+		' '	bbMoveEntity cam, -cams, 0, 0
+		' 	speedx = speedx - 1
+		' EndIf
 		
-		If kd( 205 ) Then
-			' bbMoveEntity cam, cams, 0, 0
-			 speedx = speedx + 1
+		' If kd( 205 ) Then
+		' 	' bbMoveEntity cam, cams, 0, 0
+		' 	 speedx = speedx + 1
 			
-		EndIf
+		' EndIf
 		
 		If Not kd( 203 ) And Not kd( 205 ) Then speedx = 0
 		
@@ -123,7 +140,7 @@ Type player Extends yentity
 			 make_map = True
 		EndIf
 	
-			
+		
 	
 	End Method'end move
 	'/////////////edit move/////////////
@@ -144,14 +161,14 @@ Type player Extends yentity
 		EndIf
 
 		'left right
-		If kd( 203 ) Then 
-		'	bbMoveEntity cam, -speed, 0, 0
-			move_by( -speed, 0, 0 )
-		EndIf
-		If kd( 205 ) Then
-			 bbMoveEntity cam, speed, 0, 0
-			 move_by( speed, 0, 0 )
-		EndIf
+		' If kd( 203 ) Then 
+		' '	bbMoveEntity cam, -speed, 0, 0
+		' 	move_by( -speed, 0, 0 )
+		' EndIf
+		' If kd( 205 ) Then
+		' 	 bbMoveEntity cam, speed, 0, 0
+		' 	 move_by( speed, 0, 0 )
+		' EndIf
 		
 		'up down
 		If kd( 30 ) And make_map Then
@@ -167,27 +184,17 @@ Type player Extends yentity
 		
 		
 		o:obstacle = obstacle( collide( "obstacle" ) )
+		wint = collide( "win" )
+		col_coin = collide( "coin" )
 		'place tile
-		If kd( 57 ) And make_map And  Not o Then
-
-				tmap.make_tile( x, y, z, currt )
-		 EndIf
+		If kd( 57 ) And make_map And  Not o And Not wint And Not col_coin Then tmap.make_tile( x, y, z, currt )
 		
-		If kd( 2 ) And make_map Then
-			currt = 1
-	 	EndIf
-		If kd( 3 ) And make_map Then
-			currt = 2
-		EndIf
-		If kd( 4 ) And make_map Then
-			currt = 3
-		EndIf
-		If kd( 5 ) And make_map Then
-			currt = 4
-		EndIf
-		If kd( 6 ) And make_map Then
-			currt = 5
-		EndIf
+		If kd( 11 ) And make_map Then currt = 0
+		If kd( 2 ) And make_map Then currt = 1
+		If kd( 3 ) And make_map Then currt = 2
+		If kd( 4 ) And make_map Then currt = 3
+		If kd( 5 ) And make_map Then currt = 4
+		If kd( 6 ) And make_map Then currt = 5
 		 
 		If kd( 29 ) Or kd( 157 ) And kd( 31 ) Then
 				 tmap.saveMap()
@@ -284,6 +291,8 @@ Type player Extends yentity
 		
 		sp =  collide( "spikes" )
 		hit_win =  collide( "win" )
+		hit_coin =  collide( "coin" )
+		hit_i_coin:obstacle =  obstacle( collide( "i_coin" ) )
 		
 		top:yentity = collide( "obstacle", 0, -1 )
 		
@@ -300,32 +309,26 @@ Type player Extends yentity
 		
 		'/////action collide
 		If hit_win Then
-			Print  o.yaction
+			'Print  o.yaction'-----the error
 
 			bbPositionEntity ye.camera, 0, 0, -4
 			gw:game_world = game_world( world )
-			Print "do next level"
 			gw.nextLevel()
 			ye.change_world( "win_world" )
 		EndIf'win
-		If o  And o.yaction Then
 		
-			If o.yaction = "nograv" Then set_effect( "nogravity" )	
-			If o.yaction = "coin" Then
-				
-				gw:game_world = game_world( world )
+		If hit_coin Then
+			gw:game_world = game_world( world )
+			gw.score = gw.score + 5
+			gw.remove( hit_coin )
+		EndIf
+		If hit_i_coin Then
+			gw:game_world = game_world( world )
+			If hit_i_coin.activated Then
 				gw.score = gw.score + 5
-				world.remove( o )
+				hit_i_coin.activated = False
 			EndIf
-			
-			'telport to level start
-			If o.yaction = "telports" Then
-				'reset camera and player pos
-				bbPositionEntity  ye.camera, 0, 0, -4
-				sxyz( -3, 0, 7 )
-			EndIf
-			
-		EndIf' yaction
+		EndIf
 		
 		If sp Then
 				bbPositionEntity ye.camera, 0, 0, -4

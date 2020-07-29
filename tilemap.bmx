@@ -41,7 +41,6 @@ Type ytilemap Extends yentity
 			o:obstacle =  obstacle.Create( x, y, z, c, 0 )
 			o.tile_type = id
 			o.ytype = "win"
-			o.yaction = "win"
 			world.add( o )
 		EndIf
 		
@@ -51,7 +50,6 @@ Type ytilemap Extends yentity
 			o:obstacle = obstacle.Create( x, y, z, c, 0 )
 			o.tile_type = id
 			o.ytype = "coin"
-			o.yaction = "coin"
 			world.add( o )
 		EndIf
 		If id = 5 Then
@@ -59,6 +57,14 @@ Type ytilemap Extends yentity
 			o:obstacle = obstacle.Create( x, y, z, c, 0 )
 			o.tile_type = id
 			o.alpha( 0 )
+			world.add( o )
+		EndIf
+		If id = 0 Then
+			c = bbCreateSphere()
+			bbEntityColor c, 0, 255, 0
+			o:obstacle = obstacle.Create( x, y, z, c, 0 )
+			o.tile_type = id
+			o.ytype = "i_coin"
 			world.add( o )
 		EndIf
 
@@ -155,13 +161,25 @@ Type ytilemap Extends yentity
 			maptxt = maptxt + l
 		Next
 		'Print maptxt
-		
+		type_to_file( "win", file )
 	
 		
 		
 		CloseStream file
 		
 	EndMethod
+	
+	
+	Method type_to_file( t:String, file )
+		
+		es:TList = get_by_type( t )
+		For e:yentity = EachIn es
+			o:obstacle = obstacle( e )
+			l:String = String( o.x ) + "," + String( o.y ) + "," + String( o.z ) + "," + o.tile_type' + "\n"
+			WriteLine file, l
+		Next
+	
+	EndMethod'type_to_file
 	
 	Function Create:ytilemap( x:Float = 0, y:Float = 0, z:Float = 0, grafic:Int = 0, speed:Float = 0 )
 		

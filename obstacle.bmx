@@ -3,14 +3,15 @@
 
 Type obstacle Extends yentity
 
-	Field yaction:String = "none", tile_type:String = 1
+	Field yaction:String = "none", tile_type:String = 1, activatedTimer:ytimer, activated = True, activatedTimerTime = 60
 	
 	Method init()
 	
 		Super.init()
-		bbEntityType grafic, 1
+		'bbEntityType grafic, 1
 		'src_type,dest_type,detectionmethod,response
-		bbCollisions 1, 2, 2, 2
+		'bbCollisions 1, 2, 2, 2
+		activatedTimer = ytimer.Create( activatedTimerTime )
 	
 	
 	End Method'end init
@@ -21,19 +22,32 @@ Type obstacle Extends yentity
 		Super.update()
 		
 		ydelete()
+		eternalCoin()
 
 	End Method'end update	
 	
 	Method ydelete()
 
-		If click() And kd(56) Then
+		If click() And kd( 56 ) Then
 		    ps:TList  = get_by_type( "player" )
-			p:player = player(ps.FirstLink().Value())
-			If p.make_map Then world.remove(Self)
+			p:player = player( ps.FirstLink().Value() )
+			If p.make_map Then world.remove( Self )
 			
 		EndIf
 
 	End Method'end ydelete
+	
+	Method eternalCoin()
+		
+		If Not activated Then
+			bbHideEntity grafic
+			If activatedTimer.finished() Then
+				activated = True
+				bbShowEntity grafic
+			EndIf
+		EndIf
+		
+	EndMethod
 	
 	Function Create:obstacle( x:Float, y:Float, z:Float, grafic:Int, speed:Float )
 		

@@ -20,8 +20,14 @@ Type yengine
 		bbPositionEntity camera,0,0,-4
 		
 		current_world.init()
-		
+		 FPS=30
+		period=1000/FPS
+		time=MilliSecs()-period
 		While Not bbKeyHit(1)
+		
+			Repeat
+				elapsed=MilliSecs()-time
+			Until elapsed
 			
 			update()
 	
@@ -219,7 +225,7 @@ End Type
 
 Type yentity
 	
-	Field x#,y#,z#,speed#,grafic,ytype$="entity",world:yworld,collide_c# = 2
+	Field x#,y#,z#,speed#,grafic,ytype$="entity",world:yworld,collide_c# = 2, fadeOutTimer:ytimer
 	
 	Method init()
 		'Print "init entity"
@@ -227,7 +233,7 @@ Type yentity
 		If grafic<> Null Then
 		bbPositionEntity grafic,x,y,z
 		EndIf 
-		
+		fadeOutTimer = ytimer.Create(0.5)
 		
 
 		
@@ -295,10 +301,13 @@ Type yentity
 		For e:yentity=EachIn es
 			dist = bbEntityDistance(tst ,e.grafic)
 			If dist < collide_c And e <> Self Then
+				bbFreeEntity tst
+				es.clear()
 				Return e
 			EndIf
 		Next
-		
+		bbFreeEntity tst
+		es.clear()
 		Return Null
 	End Method 'end collide
 	
@@ -314,6 +323,10 @@ Type yentity
 		bbEntityAlpha grafic, a# 
 		
 	End Method 'alpha
+	
+	Method fadeOut(s#)
+		'every seconds / 1000, reduce alpha by 0.001
+	EndMethod
 	
 		
 	Method click()
