@@ -6,12 +6,14 @@
 
 Type game_world Extends yworld
 	
-Field cl = 1, tm:ytilemap, score = 0, lives = 3, maxLevels
+Field cl = 1, tm:ytilemap, score = 0, lives = 3, maxLevels,yhp:helperPivot ,ypick,p:player 
 		
 	Method update()
 		
 		Super.update()
 		
+		pickDo()
+		click_action()
 	EndMethod
 	
 	Method twodupdate()
@@ -22,6 +24,8 @@ Field cl = 1, tm:ytilemap, score = 0, lives = 3, maxLevels
 	Method init()
 		
 		Super.init()
+		
+		yhp =  helperPivot.Create()
 		
 		'init skybox
 		skybox = bbCreateSphere( 12 )
@@ -48,7 +52,7 @@ Field cl = 1, tm:ytilemap, score = 0, lives = 3, maxLevels
 		
 		'init player
 		c =  bbCreateCube()
-		p:player = player.Create( -3, 0, 7, c, 0.2 )
+		p = player.Create( -3, 0, 7, c, 0.2 )
 		add( p )
 		p.make_map = True
 		
@@ -87,6 +91,27 @@ Field cl = 1, tm:ytilemap, score = 0, lives = 3, maxLevels
 		EndIf
 
 	EndMethod
+	
+	Method pickDo()
+		yx=bbMouseX()
+		yy=bbMouseY()
+		mypic = bbCameraPick(ye.camera,yx,yy)
+		ypick = mypic
+		Return mypic 
+	End Method 'pickDo
+	
+	
+	Method click_action()
+		If Not p.make_map Then Return
+		If ypick<> 0 And yhp.isHelperCube(ypick)=1
+		
+			'move helper pivot to pick
+			bbPositionEntity yhp.ACube,bbEntityX(ypick),bbEntityY(ypick),bbEntityZ(ypick)
+			bbShowEntity yhp.ACube	
+			
+		
+		End If
+	End Method
 		
 	Function Create:game_world()
 		

@@ -3,7 +3,7 @@
 
 Type obstacle Extends yentity
 
-	Field yaction:String = "none", tile_type:String = 1, activatedTimer:ytimer, activated = True, activatedTimerTime = 60
+	Field yaction:String = "none", tile_type:String = 1, activatedTimer:ytimer, activated = True, activatedTimerTime = 5
 	
 	Method init()
 	
@@ -20,7 +20,7 @@ Type obstacle Extends yentity
 	Method update()
 	
 		Super.update()
-		
+
 		ydelete()
 		eternalCoin()
 
@@ -38,12 +38,12 @@ Type obstacle Extends yentity
 	End Method'end ydelete
 	
 	Method eternalCoin()
-		
+
 		If Not activated Then
-			bbHideEntity grafic
+			 visable(0)
 			If activatedTimer.finished() Then
 				activated = True
-				bbShowEntity grafic
+				visable(1)
 			EndIf
 		EndIf
 		

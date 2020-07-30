@@ -7,6 +7,9 @@ Include "game_world.bmx"
 
 Include "win_world.bmx"
 
+Include "bbtype.bmx"
+Include "helperPivot.bmx"
+
 Include "player.bmx"
 Include "obstacle.bmx"
 Include "tilemap.bmx"

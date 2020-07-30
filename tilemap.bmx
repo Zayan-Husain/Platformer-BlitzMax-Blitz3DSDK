@@ -59,6 +59,13 @@ Type ytilemap Extends yentity
 			o.alpha( 0 )
 			world.add( o )
 		EndIf
+		If id = 6 Then
+			tr = bbCreateCylinder()
+			o:obstacle = obstacle.Create(x, y, z, tr, 0)
+			o.tile_type = id
+			o.ytype = "trampoline"
+			world.add( o )
+		EndIf
 		If id = 0 Then
 			c = bbCreateSphere()
 			bbEntityColor c, 0, 255, 0
@@ -153,15 +160,11 @@ Type ytilemap Extends yentity
 			WriteLine file, l
 			maptxt = maptxt + l
 		Next
-		spk:TList = get_by_type( "spikes" )
-		For e:yentity = EachIn spk
-			o:obstacle = obstacle( e )
-			l:String = String( o.x ) + "," + String( o.y ) + "," + String( o.z ) + "," + o.tile_type' + "\n"
-			WriteLine file, l
-			maptxt = maptxt + l
-		Next
+		type_to_file( "spikes", file )
 		'Print maptxt
 		type_to_file( "win", file )
+		type_to_file( "coin", file )
+		type_to_file( "i_coin", file )
 	
 		
 		

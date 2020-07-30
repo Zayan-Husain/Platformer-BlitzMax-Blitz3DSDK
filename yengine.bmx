@@ -318,6 +318,16 @@ Type yentity
 		
 	End Method ' remove
 	
+	
+			
+	Method visable(is)
+		
+		If is = 0 Then bbHideEntity grafic
+		If is = 1 Then bbShowEntity grafic
+		 
+		
+	End Method ' remove
+	
 	Method alpha(a#)
 	
 		bbEntityAlpha grafic, a# 
@@ -394,7 +404,7 @@ Type ytimer
 	
 	Function Create:ytimer(max_count2=1)
 		t:ytimer= New ytimer
-		max_count2 = max_count2 * 20
+		max_count2 = max_count2 * 60
 		t.count =0
 		t.max_count = max_count2
 		t.yfinished=0

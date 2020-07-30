@@ -186,8 +186,9 @@ Method cam_pos()
 		o:obstacle = obstacle( collide( "obstacle" ) )
 		wint = collide( "win" )
 		col_coin = collide( "coin" )
+		col_icoin = collide( "i_coin" )
 		'place tile
-		If kd( 57 ) And make_map And  Not o And Not wint And Not col_coin Then tmap.make_tile( x, y, z, currt )
+		If kd( 57 ) And make_map And  Not o And Not wint And Not col_coin And Not col_icoin Then tmap.make_tile( x, y, z, currt )
 		
 		If kd( 11 ) And make_map Then currt = 0
 		If kd( 2 ) And make_map Then currt = 1
@@ -195,6 +196,7 @@ Method cam_pos()
 		If kd( 4 ) And make_map Then currt = 3
 		If kd( 5 ) And make_map Then currt = 4
 		If kd( 6 ) And make_map Then currt = 5
+		If kd( 7 ) And make_map Then currt = 6
 		 
 		If kd( 29 ) Or kd( 157 ) And kd( 31 ) Then
 				 tmap.saveMap()
@@ -293,6 +295,7 @@ Method cam_pos()
 		hit_win =  collide( "win" )
 		hit_coin =  collide( "coin" )
 		hit_i_coin:obstacle =  obstacle( collide( "i_coin" ) )
+		tramp =  collide( "trampoline" )
 		
 		top:yentity = collide( "obstacle", 0, -1 )
 		
@@ -322,6 +325,7 @@ Method cam_pos()
 			gw.score = gw.score + 5
 			gw.remove( hit_coin )
 		EndIf
+		
 		If hit_i_coin Then
 			gw:game_world = game_world( world )
 			If hit_i_coin.activated Then
@@ -329,7 +333,14 @@ Method cam_pos()
 				hit_i_coin.activated = False
 			EndIf
 		EndIf
+		If tramp Then
+			speedy = speedy + jump_power*2
+			jumping = True
+		 	grav = ograv
+			
+		EndIf
 		
+		'hit spikes
 		If sp Then
 				bbPositionEntity ye.camera, 0, 0, -4
 				gw:game_world = game_world( world )
