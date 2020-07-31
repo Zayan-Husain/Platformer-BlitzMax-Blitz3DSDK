@@ -6,7 +6,8 @@
 
 Type game_world Extends yworld
 	
-Field cl = 1, tm:ytilemap, score = 0, lives = 3, maxLevels,yhp:helperPivot ,ypick,p:player 
+Field cl = 1, tm:ytilemap, score = 0, lives = 3, maxLevels, yhp:helperPivot, ypick, p:player 
+Field deletingMode
 		
 	Method update()
 		
@@ -14,6 +15,7 @@ Field cl = 1, tm:ytilemap, score = 0, lives = 3, maxLevels,yhp:helperPivot ,ypic
 		
 		pickDo()
 		click_action()
+		deleteBlock()
 	EndMethod
 	
 	Method twodupdate()
@@ -24,7 +26,7 @@ Field cl = 1, tm:ytilemap, score = 0, lives = 3, maxLevels,yhp:helperPivot ,ypic
 	Method init()
 		
 		Super.init()
-		
+		Print deletingMode
 		yhp =  helperPivot.Create()
 		
 		'init skybox
@@ -93,25 +95,80 @@ Field cl = 1, tm:ytilemap, score = 0, lives = 3, maxLevels,yhp:helperPivot ,ypic
 	EndMethod
 	
 	Method pickDo()
-		yx=bbMouseX()
-		yy=bbMouseY()
-		mypic = bbCameraPick(ye.camera,yx,yy)
+		
+		yx = bbMouseX()
+		yy = bbMouseY()
+		mypic = bbCameraPick( ye.camera, yx, yy )
 		ypick = mypic
 		Return mypic 
-	End Method 'pickDo
+	EndMethod 'pickDo
 	
+	Method deleteBlock()
+		
+		If kd( 14 ) Then deletingMode = 1
+		If deletingMode Then
+			yhp.hide()
+			If kd( 28 ) Then deletingMode = 0
+			
+		EndIf
+		
+	EndMethod
 	
 	Method click_action()
+		
 		If Not p.make_map Then Return
-		If ypick<> 0 And yhp.isHelperCube(ypick)=1
+		Print ypick
+		Print yhp.isHelperCube( ypick )
+		If ypick <> 0 And yhp.isHelperCube( ypick ) = 1
 		
 			'move helper pivot to pick
-			bbPositionEntity yhp.ACube,bbEntityX(ypick),bbEntityY(ypick),bbEntityZ(ypick)
+			bbPositionEntity yhp.ACube, bbEntityX( ypick ), bbEntityY( ypick ), bbEntityZ( ypick )
 			bbShowEntity yhp.ACube	
 			
 		
-		End If
-	End Method
+		EndIf
+		Local  apos:Float[]
+		apos:Float = yhp.getPosf()'get apos piv position xyz as int array
+		If bbMouseHit( 1 ) And  ypick <> 0 And dist <= 5 Then CreateBlockOnPick( apos ) 'add cube
+	EndMethod
+	
+	
+	
+	
+	Method CreateBlockOnPick( apos:Float[] )
+	
+			piv = bbCreatePivot()
+			
+	
+			pick2 = pickDo()
+			'Print apos[0]+" "+apos[1]+" "+apos[2]+" "+bbEntityName(pick2)
+			Select bbEntityName( pick2 )
+							
+			   Case "top" 
+				bbPositionEntity piv, apos[0], apos[1]+2, apos[2]
+							
+			   Case "bottom"
+				 bbPositionEntity piv, apos[0], apos[1]-2, apos[2]
+							
+			   Case "front"
+				 bbPositionEntity piv, apos[0], apos[1], apos[2]+2
+							
+			   Case "back"
+				 bbPositionEntity piv, apos[0], apos[1], apos[2]-2
+							
+			   Case "left"
+				 bbPositionEntity piv, apos[0]-2, apos[1], apos[2]
+							
+			   Case "right"
+				 bbPositionEntity piv, apos[0]+2, apos[1], apos[2]
+			EndSelect
+			tm.make_tile( bbEntityX( piv ), bbEntityY( piv ), bbEntityZ( piv ), p.currt )
+			'CreateBlock(bbEntityX(piv),bbEntityY(piv),bbEntityZ(piv),"ground")
+			bbFreeEntity piv
+	
+	EndMethod
+		
+	
 		
 	Function Create:game_world()
 		

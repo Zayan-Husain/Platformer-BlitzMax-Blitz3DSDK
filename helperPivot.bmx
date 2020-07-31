@@ -24,6 +24,14 @@ Type helperPivot Extends TBBType
 		Return ret
 	End Method 'getPos
 	
+	Method getPosf:Float[]()
+		Local ret:Float[3] 
+		ret[0] =  bbEntityX(ACube) 
+		ret[1] =  bbEntityY(ACube) 
+		ret[2] =  bbEntityZ(ACube) 
+		Return ret
+	End Method 'getPos
+	
 	Method isHelperCube(pick)
 
 	  If pick<>0 And pick<>ACubeTop And pick<>ACubeBottom And pick<>ACubeFront And pick<>ACubeBack And pick<>ACubeLeft And pick<>ACubeRight Then

@@ -27,9 +27,10 @@ Type obstacle Extends yentity
 	End Method'end update	
 	
 	Method ydelete()
-
-		If click() And kd( 56 ) Then
-		    ps:TList  = get_by_type( "player" )
+		gw:game_world = game_world( world )
+		If gw.deletingMode = 0 Then Return
+		If click(1) Then
+		  ps:TList  = get_by_type( "player" )
 			p:player = player( ps.FirstLink().Value() )
 			If p.make_map Then world.remove( Self )
 			

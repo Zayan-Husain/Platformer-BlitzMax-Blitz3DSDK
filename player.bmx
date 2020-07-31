@@ -8,6 +8,7 @@ Type player Extends yentity
 	Field canJump = True, powerupTimer:ytimer, effect:String = "none", make_map, tmap:ytilemap, currt = 1
 
 	Field speedx:Float, speedy:Float, speedz:Float, hspeed:Float = 0.01, dspeed:Float = 0.01, vspeed:Float = 0.05, yaw:Float = 0
+	
 
 	Method init()
 	

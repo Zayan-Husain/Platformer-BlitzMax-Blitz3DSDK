@@ -339,10 +339,10 @@ Type yentity
 	EndMethod
 	
 		
-	Method click()
+	Method click(mb)
 
 		bbEntityPickMode grafic,1
-		If bbMouseDown (1)Then
+		If bbMouseDown (mb)Then
 			picked = bbCameraPick (world.ye.camera, bbMouseX (), bbMouseY())
 			'Print(picked +" "+grafic )
 			If picked = grafic Then
