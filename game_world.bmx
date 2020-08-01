@@ -57,6 +57,13 @@ Field deletingMode
 		p = player.Create( -3, 0, 7, c, 0.2 )
 		add( p )
 		p.make_map = True
+		spawners:TList = p.get_by_type( "spawn" )
+		Print "Count: " + spawners.Count()
+		If spawners.Count() > 0 Then
+			spawner:obstacle = obstacle( spawners.First() )
+			p.sxyz( spawner.x, spawner.y + 1.5, spawner.z )
+			spawner.alpha( 0.5 ) 
+		EndIf
 		
 		Rem c2 =  bbCreateCube()
 		add( obstacle.Create( 0, -5, 18, c2, 0 ) )
@@ -105,10 +112,13 @@ Field deletingMode
 	
 	Method deleteBlock()
 		
-		If kd( 14 ) Then deletingMode = 1
+		If kd( 14 ) Then deletingMode = True
+		
 		If deletingMode Then
 			yhp.hide()
-			If kd( 28 ) Then deletingMode = 0
+			bbPositionEntity yhp.ACube, p.x, p.y, p.z
+			If kd( 28 ) Then deletingMode = False
+
 			
 		EndIf
 		
@@ -116,9 +126,8 @@ Field deletingMode
 	
 	Method click_action()
 		
-		If Not p.make_map Then Return
-		Print ypick
-		Print yhp.isHelperCube( ypick )
+		If Not p.make_map Or deletingMode  Then Return
+
 		If ypick <> 0 And yhp.isHelperCube( ypick ) = 1
 		
 			'move helper pivot to pick

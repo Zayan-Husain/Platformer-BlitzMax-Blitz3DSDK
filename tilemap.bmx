@@ -61,9 +61,18 @@ Type ytilemap Extends yentity
 		EndIf
 		If id = 6 Then
 			tr = bbCreateCylinder()
-			o:obstacle = obstacle.Create(x, y, z, tr, 0)
+			o:obstacle = obstacle.Create( x, y, z, tr, 0 )
 			o.tile_type = id
 			o.ytype = "trampoline"
+			world.add( o )
+		EndIf
+		If id = 9 Then
+			sp = bbCreateCube()
+			bbScaleEntity sp, 1, 0.2, 1
+			bbEntityColor sp, 255, 128, 0
+			o:obstacle = obstacle.Create( x, y - 0.8, z, sp, 0 )
+			o.tile_type = id
+			o.ytype = "spawn"
 			world.add( o )
 		EndIf
 		If id = 0 Then
@@ -165,6 +174,7 @@ Type ytilemap Extends yentity
 		type_to_file( "win", file )
 		type_to_file( "coin", file )
 		type_to_file( "i_coin", file )
+		type_to_file( "spawn", file )
 	
 		
 		

@@ -12,7 +12,8 @@ Type obstacle Extends yentity
 		'src_type,dest_type,detectionmethod,response
 		'bbCollisions 1, 2, 2, 2
 		activatedTimer = ytimer.Create( activatedTimerTime )
-	
+		
+		bbEntityPickMode grafic,1
 	
 	End Method'end init
 	
@@ -28,7 +29,7 @@ Type obstacle Extends yentity
 	
 	Method ydelete()
 		gw:game_world = game_world( world )
-		If gw.deletingMode = 0 Then Return
+		If Not gw.deletingMode Then Return
 		If click(1) Then
 		  ps:TList  = get_by_type( "player" )
 			p:player = player( ps.FirstLink().Value() )

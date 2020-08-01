@@ -1,7 +1,7 @@
 
 Type helperPivot Extends TBBType
 	Field ACube,ACubeTop,ACubeBottom,ACubeFront,ACubeBack,ACubeLeft,ACubeRight 
-	
+	Field active =True
 	
 	Function makeHelperCube(parent,x#,y#,z#,name$,w#,h#,d#)
 		'Print"in makeHelperCube"
@@ -43,6 +43,7 @@ Type helperPivot Extends TBBType
 	
 	Method hide()
 		bbHideEntity ACube
+		active =False
 	End Method 
 	
 	

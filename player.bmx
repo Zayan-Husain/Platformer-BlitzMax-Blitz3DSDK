@@ -198,6 +198,7 @@ Method cam_pos()
 		If kd( 5 ) And make_map Then currt = 4
 		If kd( 6 ) And make_map Then currt = 5
 		If kd( 7 ) And make_map Then currt = 6
+		If kd( 10 ) And make_map Then currt = 9
 		 
 		If kd( 29 ) Or kd( 157 ) And kd( 31 ) Then
 				 tmap.saveMap()
